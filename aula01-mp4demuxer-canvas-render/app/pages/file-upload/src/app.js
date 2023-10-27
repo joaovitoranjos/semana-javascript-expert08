@@ -3,27 +3,35 @@ import View from './view.js';
 const view = new View()
 const clock = new Clock()
 
+const worker = new Worker('./src/worker/worker.js', {
+    type: 'module'
+})
+
+worker.onmessage = (data) => {
+    if(data.status !== 'done') return;
+    clock.stop()
+    view.updateElapsedTime(`Process took ${took.replace('ago', '')}`)
+    console.log('recebi no processo da view', data)
+}
+
+
+
 let took = ''
 view.configureOnFileChange(file => {
+worker.postMessage({
+    file
+})
+
     clock.start((time) => {
         took = time;
         view.updateElapsedTime(`Process started ${time}`)
     })
 
-    setTimeout(() => {
-        clock.stop()
-        view.updateElapsedTime(`Process took ${took.replace('ago', '')}`)
-    }, 5000)
-})
-
-btnUploadVideo.addEventListener('click', () => {
-    // trigger file input
-    fileUpload.click()
 })
 
 async function fakeFetch() {
     const filePath = '/videos/frag_bunny.mp4'
-    const reponse = await fetch(filePat)
+    const response = await fetch(filePath)
 
     //const reponse = await fetch(filePath, {
     //   method: "HEAD"
@@ -31,7 +39,7 @@ async function fakeFetch() {
     // traz o tamanho do arquivo!
     // response.headers.get('content-lenght')
     // debugger
-    const file = new File ([await Response.blob()], filePath, {
+    const file = new File ([await response.blob()], filePath, {
         type: 'video/mp4',
         lastModified: Date.now()
     })
