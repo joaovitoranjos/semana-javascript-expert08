@@ -28,7 +28,7 @@ export default class Videoprocessor {
         })
 
         
-        this.#mp4Demuxer.run(stream,
+        return this.#mp4Demuxer.run(stream,
             {
                 onConfig(config) {
                     decoder.configure(config)
@@ -39,18 +39,24 @@ export default class Videoprocessor {
                     debugger
                 }
 
+            }
+        ).then (() => {
+            setTimeout(() => {
+                controller.close()
+            },1000);
         })
 
     }
     
-    async start ({file, encoderConfig, sendMessage}) {
+    async start ({file, encoderConfig, }) {
         const stream = file.stream()
         const fileName = file.name.split('/').pop().replace('.mp4','')
         await this.mp4Decoder(encoderConfig, stream)
         .pipeTo(new WritableStream({
             write(frame) {
+                renderFrame(frame)
 
-            }
+            },
         }))
     }
 }
