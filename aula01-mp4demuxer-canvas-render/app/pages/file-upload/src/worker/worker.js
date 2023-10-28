@@ -29,7 +29,7 @@ const encoderConfig = {
     //avc: { format: 'annexb'}
 }
 
-const mp4Demuxer = new mp4Demuxer()
+const mp4Demuxer = new MP4Demuxer()
 const videoProcessor = new Videoprocessor({
     mp4Demuxer
 })

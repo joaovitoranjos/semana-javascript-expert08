@@ -6,7 +6,9 @@ const clock = new Clock()
 const worker = new Worker('./src/worker/worker.js', {
     type: 'module'
 })
-
+worker.onerror = (error) => {
+    console.error('error worker', error)
+}
 worker.onmessage = (data) => {
     if(data.status !== 'done') return;
     clock.stop()
